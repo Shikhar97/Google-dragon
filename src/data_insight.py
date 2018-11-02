@@ -1,9 +1,8 @@
-import pandas as pd
 import numpy as np
-from collections import Counter
 from random import shuffle
 
-import generate_data as gd
+from src import generate_data as gd
+
 
 class DataInsight():
 

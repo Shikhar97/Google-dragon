@@ -70,7 +70,7 @@ class DataGenerate():
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 cv2.destroyAllWindows()
                 break
-            if len(training_data) % 5000 == 0:
+            if len(training_data) % 50 == 0:
                 self.count += 1
                 print(len(training_data))
                 # y = np.load(self.training_data_file_path)
@@ -79,6 +79,7 @@ class DataGenerate():
                 training_data = []
                 if self.count == 10:
                     cv2.destroyAllWindows()
-                    break
+                    return 1
+
 # z=DataGenerate()
 # z.main()
