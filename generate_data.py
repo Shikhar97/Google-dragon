@@ -38,8 +38,11 @@ training_data_file_path = 'training_data.npy'
 if os.path.isfile(training_data_file_path):
     print('File exists, loading previous data!')
     training_data = list(np.load(training_data_file_path))
+    file_exist = True
 else:
     print('File does not exist, starting fresh!')
+    np.save(training_data_file_path, [[]])
+    file_exist = False
     training_data = []
 
 last_time = time.time()
@@ -71,8 +74,13 @@ while (True):
     if cv2.waitKey(25) & 0xFF == ord('q'):
         cv2.destroyAllWindows()
         break
-    if len(training_data) % 500 == 0:
+    if file_exist and len(training_data) % 500 == 0:
         print(len(training_data))
-        y = np.load(training_data_file_path) if os.path.isfile(training_data_file_path) else np.save(training_data_file_path, training_data)
-        np.save(training_data_file_path, np.append(y,training_data))
-        training_data = 0
+        y = np.load(training_data_file_path)
+        np.save(training_data_file_path, np.concatenate((y, np.array(training_data))))
+        training_data = []
+    else:
+        if not file_exist:
+            np.save(training_data_file_path, np.array(training_data))
+            training_data = []
+            file_exist = True
