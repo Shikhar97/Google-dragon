@@ -1,5 +1,5 @@
-from data_insight import individualChoices, modified_training_data_file_path
-from get_keys import no_of_classes
+import data_insight
+from src.get_keys import no_of_classes
 # from main import HEIGHT, WIDTH
 HEIGHT = 224
 WIDTH  = 224
@@ -8,7 +8,7 @@ import numpy as np
 
 import keras.utils
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten
+from keras.layers import Dense, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras.layers.advanced_activations import LeakyReLU
 import keras.losses
@@ -16,11 +16,13 @@ from sklearn.model_selection import train_test_split
 
 split_factor = 0.8
 
+obj = data_insight.DataInsight()
+
 
 # prepare training and testing samples
 def splitData(path):
-    up, down, nothing = individualChoices(path)
 
+    up, down, nothing = obj.individualChoices(path)
     shuffle(up)
     shuffle(down)
     shuffle(nothing)
@@ -36,7 +38,7 @@ def splitData(path):
     return train_data, test_data
 
 
-training_data, testing_data = splitData(modified_training_data_file_path)
+training_data, testing_data = splitData(obj.modified_training_data_file_path)
 
 train_x = np.array([i[0] for i in training_data])
 train_y = np.array([i[1] for i in training_data])
@@ -73,13 +75,18 @@ WEIGHT_FILE_NAME = "cnn_model.h5"
 
 def model(height, width, learning_rate, epochs, batch_size):
     dragon = Sequential()
-    dragon.add(Conv2D(4, kernel_size=3, input_shape=(height, width, 1), padding="valid"))
+    dragon.add(Conv2D(8, kernel_size=3, input_shape=(height, width, 1), padding="valid"))
     dragon.add(LeakyReLU(alpha=0.1))
     dragon.add(MaxPooling2D(2, 2))
 
-    dragon.add(Conv2D(8, kernel_size=3, padding="valid"))
+    dragon.add(Conv2D(16, kernel_size=3, padding="valid"))
     dragon.add(LeakyReLU(alpha=0.1))
     dragon.add(MaxPooling2D(2, 2))
+
+    dragon.add(Conv2D(32, kernel_size=3, padding="valid"))
+    dragon.add(LeakyReLU(alpha=0.1))
+    dragon.add(MaxPooling2D(2, 2))
+
     dragon.add(Flatten())
 
     dragon.add(Dense(128))
@@ -91,14 +98,14 @@ def model(height, width, learning_rate, epochs, batch_size):
     dragon.compile(loss=keras.losses.categorical_crossentropy,
                    optimizer=keras.optimizers.Adam(lr=learning_rate), metrics=['accuracy'])
 
-    dragon_train = dragon.fit(train_x, train_y, batch_size=batch_size,
+    dragon.fit(train_x, train_y, batch_size=batch_size,
                               epochs=epochs, verbose=1,
                               validation_data=(valid_x, valid_y))
     # Test out the Model
 
-    test_eval = dragon_train.evaluate(test_x, test_y_one_hot, verbose=0)
+    test_eval = dragon.evaluate(test_x, test_y_one_hot, verbose=0)
     print('Test loss:', test_eval[0])
     print('Test accuracy:', test_eval[1])
 
 
-model(224, 224, 1e-2, 5, 30)
+model(224, 224, 1e-2, 10, 30)
