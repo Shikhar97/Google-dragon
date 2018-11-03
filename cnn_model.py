@@ -1,18 +1,20 @@
-import data_insight
-from src.get_keys import no_of_classes
-# from main import HEIGHT, WIDTH
-HEIGHT = 224
-WIDTH  = 224
-from random import shuffle
 import numpy as np
-
 import keras.utils
+import keras.losses
 from keras.models import Sequential
 from keras.layers import Dense, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras.layers.advanced_activations import LeakyReLU
-import keras.losses
+from random import shuffle
 from sklearn.model_selection import train_test_split
+
+from src import data_insight
+from src.get_keys import no_of_classes
+
+
+HEIGHT = 224
+WIDTH  = 224
+
 
 split_factor = 0.8
 
