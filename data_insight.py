@@ -1,7 +1,9 @@
 import pandas as pd
-import numpy as np
 from collections import Counter
+import numpy as np
 from random import shuffle
+import os
+
 
 import generate_data as gd
 
@@ -38,8 +40,11 @@ class DataInsight():
 
     def main(self):
         final_data = []
-
-        for i in range(10):
+        file_names = os.listdir("data/")  # dir is your directory path
+        number_files = len(file_names)
+        file_names.sort()
+        print(file_names)
+        for i in range(number_files):
 
             print("file"+str(i+1))
 

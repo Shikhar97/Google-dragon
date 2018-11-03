@@ -31,13 +31,13 @@ class DataGenerate():
         else -> nothing(2)
         """
         output = self.key_to_int["nothing"]
-    
+
         if 0x26 in keys:
             output = self.key_to_int["up"]
         elif 0x28 in keys:
             output = self.key_to_int["down"]
         return output
-    
+
     def main(self):
         if os.path.isfile(self.training_data_file_path):
             print('File exists, loading previous data!')
@@ -46,13 +46,15 @@ class DataGenerate():
             print('File does not exist, starting fresh!')
             training_data = []
             # np.save(self.training_data_file_path, training_data)
-    
+
         last_time = time.time()
-    
+
         for i in list(range(4))[::-1]:
             print(i + 1)
             time.sleep(1)
-            
+        file_names = os.listdir("data/")  # dir is your directory path
+        number_files = len(file_names)
+        self.count = number_files
         while (True):
             original_screen = gb.grab_screen(region=(0, 80, 675, 280))
             # last_time = time.time()
@@ -63,10 +65,10 @@ class DataGenerate():
             output = self.key_to_one_hot(keys)
             training_data.append([original_screen, output])
             print("Key pressed ", self.int_to_key[output])
-    
+
             # print("output-> ",output)
             # print('loop took {} seconds'.format(time.time()-last_time))
-    
+
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 cv2.destroyAllWindows()
                 break
@@ -75,7 +77,8 @@ class DataGenerate():
                 print(len(training_data))
                 # y = np.load(self.training_data_file_path)
                 # if os.path.isfile(training_data_file_path + '.npy'):
-                np.save(self.training_data_file_path+str(self.count)+".npy", training_data)
+                print("file name to be written -> ", self.training_data_file_path + str(self.count) + ".npy")
+                np.save(self.training_data_file_path + str(self.count) + ".npy", training_data)
                 training_data = []
                 if self.count == 10:
                     cv2.destroyAllWindows()
