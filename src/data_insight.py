@@ -13,7 +13,7 @@ class DataInsight:
 
         self.gen_data = gd.DataGenerate()
         # self.train_data = np.load(self.gen_data.training_data_file_path+"1.npy")
-        self.modified_training_data_file_path = "../data/training_data_v2.npy"
+        self.modified_training_data_file_path = "data/training_data_v2.npy"
         # df = pd.DataFrame(self.train_data)
         # print(df.head())
         # print(Counter(df[1].apply(str)))
@@ -40,14 +40,14 @@ class DataInsight:
 
     def main(self):
         final_data = []
-        file_names = os.listdir("../data/")  # dir is your directory path
+        file_names = os.listdir("data/")  # dir is your directory path
         number_files = len(file_names)
         file_names.sort()
         print(file_names)
         for i in range(number_files):
             print("file" + str(i + 1))
 
-            up, down, nothing = self.individualChoices("../"+self.gen_data.training_data_file_path + str(i + 1) + ".npy")
+            up, down, nothing = self.individualChoices(self.gen_data.training_data_file_path + str(i + 1) + ".npy")
 
             total_data_len = len(up) + len(down) + len(nothing)
 
@@ -64,5 +64,5 @@ class DataInsight:
 
         np.save(self.modified_training_data_file_path, final_data)
 
-z=DataInsight()
-z.main()
+# z=DataInsight()
+# z.main()

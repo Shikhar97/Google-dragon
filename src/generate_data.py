@@ -39,13 +39,7 @@ class DataGenerate():
         return output
 
     def main(self):
-        if os.path.isfile(self.training_data_file_path):
-            print('File exists, loading previous data!')
-            training_data = list(np.load(self.training_data_file_path))
-        else:
-            print('File does not exist, starting fresh!')
-            training_data = []
-            # np.save(self.training_data_file_path, training_data)
+        training_data = []
 
         last_time = time.time()
 
@@ -55,7 +49,7 @@ class DataGenerate():
         file_names = os.listdir("data/")  # dir is your directory path
         number_files = len(file_names)
         self.count = number_files
-        while (True):
+        while (self.count < 10 and True):
             original_screen = gb.grab_screen(region=(0, 80, 675, 280))
             # last_time = time.time()
             original_screen = cv2.cvtColor(original_screen, cv2.COLOR_BGR2GRAY)
@@ -72,7 +66,7 @@ class DataGenerate():
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 cv2.destroyAllWindows()
                 break
-            if len(training_data) % 5000 == 0:
+            if len(training_data) % 10 == 0:
                 self.count += 1
                 print(len(training_data))
                 # y = np.load(self.training_data_file_path)
@@ -83,5 +77,7 @@ class DataGenerate():
                 if self.count == 10:
                     cv2.destroyAllWindows()
                     break
+                    return True
+        return False
 # z=DataGenerate()
 # z.main()
