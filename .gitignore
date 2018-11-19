@@ -6,6 +6,9 @@ __pycache__/
 #Training-data
 data/*.npy
 
+# model-folder
+model/
+
 # C extensions
 *.so
 

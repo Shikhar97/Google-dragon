@@ -11,10 +11,8 @@ from sklearn.model_selection import train_test_split
 from src import data_insight
 from src.get_keys import no_of_classes
 
-
 HEIGHT = 224
-WIDTH  = 224
-
+WIDTH = 224
 
 split_factor = 0.8
 
@@ -23,7 +21,6 @@ obj = data_insight.DataInsight()
 
 # prepare training and testing samples
 def splitData(path):
-
     up, down, nothing = obj.individualChoices(path)
     shuffle(up)
     shuffle(down)
@@ -66,7 +63,6 @@ test_y_one_hot = keras.utils.to_categorical(test_y)
 print(train_x.shape)
 print(train_y_one_hot.shape)
 
-
 # split data into training and validation
 train_x, valid_x, train_y, valid_y = train_test_split(train_x, train_y_one_hot, test_size=0.2)
 
@@ -101,13 +97,19 @@ def model(height, width, epochs, batch_size):
                    optimizer=keras.optimizers.Adam(), metrics=['accuracy'])
 
     dragon.fit(train_x, train_y, batch_size=batch_size,
-                              epochs=epochs, verbose=1,
-                              validation_data=(valid_x, valid_y))
-    # Test out the Model
+               epochs=epochs, verbose=1,
+               validation_data=(valid_x, valid_y))
 
+    # Test out the Model
     test_eval = dragon.evaluate(test_x, test_y_one_hot, verbose=0)
     print('Test loss:', test_eval[0])
     print('Test accuracy:', test_eval[1])
 
+    dragon_json = dragon.to_json()
+    with open("../model/dragon_cnn.json", "w") as json_file:
+        json_file.write(dragon_json)
+    # serialize weights to HDF5
+    dragon.save_weights("../model/dragon_cnn.h5")
+    print("Saved model to disk")
 
 model(224, 224, 10, 30)
