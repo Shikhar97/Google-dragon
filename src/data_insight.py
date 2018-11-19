@@ -5,7 +5,7 @@ from random import shuffle
 import os
 
 
-import generate_data as gd
+from src import generate_data as gd
 
 class DataInsight():
 

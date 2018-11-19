@@ -75,7 +75,7 @@ MODEL_FILE_NAME = "cnn_model.json"
 WEIGHT_FILE_NAME = "cnn_model.h5"
 
 
-def model(height, width, learning_rate, epochs, batch_size):
+def model(height, width, epochs, batch_size):
     dragon = Sequential()
     dragon.add(Conv2D(8, kernel_size=3, input_shape=(height, width, 1), padding="valid"))
     dragon.add(LeakyReLU(alpha=0.1))
@@ -98,7 +98,7 @@ def model(height, width, learning_rate, epochs, batch_size):
     dragon.summary()
 
     dragon.compile(loss=keras.losses.categorical_crossentropy,
-                   optimizer=keras.optimizers.Adam(lr=learning_rate), metrics=['accuracy'])
+                   optimizer=keras.optimizers.Adam(), metrics=['accuracy'])
 
     dragon.fit(train_x, train_y, batch_size=batch_size,
                               epochs=epochs, verbose=1,
@@ -110,4 +110,4 @@ def model(height, width, learning_rate, epochs, batch_size):
     print('Test accuracy:', test_eval[1])
 
 
-model(224, 224, 1e-2, 10, 30)
+model(224, 224, 10, 30)
