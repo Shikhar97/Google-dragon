@@ -4,8 +4,8 @@ import numpy as np
 from random import shuffle
 import os
 
-from src import generate_data as gd
 
+from src import generate_data as gd
 
 class DataInsight:
 
