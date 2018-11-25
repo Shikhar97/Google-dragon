@@ -3,11 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+#ipynb files
+*.ipynb
+*.txt
+
 #Training-data
 data/*.npy
-
-# model-folder
-model/
 
 # C extensions
 *.so

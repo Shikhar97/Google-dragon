@@ -1,13 +1,17 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.keys import Keys
 
 from src import data_insight, generate_data as gd
 
+gen_data = None
+files_created = 0
+
 chrome_path = "chromedriver.exe"
+
 
 chrome_options = Options()
 chrome_options.add_argument("--disable-infobars")
+
 # opening the browser
 browser = webdriver.Chrome(executable_path=chrome_path, chrome_options=chrome_options)
 
@@ -22,13 +26,9 @@ browser.get('http://www.google.com')
 # starting the game
 element = browser.find_element_by_id("t")
 
-gen_data = None
-files_created = 0
 
 # if game started generate the data
 if element:
-    element.send_keys(Keys.ARROW_UP)
-    print("Game Started")
     gen_data = gd.DataGenerate()
 
 
@@ -39,6 +39,3 @@ if gen_data:
 if files_created:
     obj = data_insight.DataInsight()
     obj.main()
-
-# print(browser.get_window_size())
-# driver.quit()

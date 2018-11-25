@@ -6,7 +6,7 @@ import os
 from src import grab_screen as gb, get_keys as gk
 
 
-class DataGenerate():
+class DataGenerate:
     def __init__(self):
         self.key_to_int = {
             "up": 0,
@@ -40,44 +40,42 @@ class DataGenerate():
 
     def main(self):
         training_data = []
-
-        last_time = time.time()
-
         for i in list(range(4))[::-1]:
             print(i + 1)
             time.sleep(1)
+
         file_names = os.listdir("data/")  # dir is your directory path
         number_files = len(file_names)
         self.count = number_files
-        while (self.count < 10 and True):
-            original_screen = gb.grab_screen(region=(0, 80, 675, 280))
-            # last_time = time.time()
-            original_screen = cv2.cvtColor(original_screen, cv2.COLOR_BGR2GRAY)
-            original_screen = cv2.resize(original_screen, (self.HEIGHT, self.WIDTH))
-            cv2.imshow("window", original_screen)
+        while self.count < 50 and True:
+
+            # original_screen = gb.grab_screen(region=(0, 80, 675, 280))
+            original_screen = gb.grab_screen(region=(0, 100, 900, 340))
+
             keys = gk.key_check()
             output = self.key_to_one_hot(keys)
+
+            original_screen = cv2.cvtColor(original_screen, cv2.COLOR_BGR2GRAY)
+
+            original_screen = cv2.resize(original_screen, (self.HEIGHT, self.WIDTH))
+            cv2.imshow("window", original_screen)
+
             training_data.append([original_screen, output])
             print("Key pressed ", self.int_to_key[output])
-
-            # print("output-> ",output)
-            # print('loop took {} seconds'.format(time.time()-last_time))
 
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 cv2.destroyAllWindows()
                 break
-            if len(training_data) % 10 == 0:
+            if len(training_data) % 2500 == 0:
                 self.count += 1
-                print(len(training_data))
-                # y = np.load(self.training_data_file_path)
-                # if os.path.isfile(training_data_file_path + '.npy'):
                 print("file name to be written -> ", self.training_data_file_path + str(self.count) + ".npy")
                 np.save(self.training_data_file_path + str(self.count) + ".npy", training_data)
                 training_data = []
-                if self.count == 10:
+                if self.count == 50:
                     cv2.destroyAllWindows()
-                    break
                     return True
         return False
+
+# to run this file indenpendently
 # z=DataGenerate()
 # z.main()

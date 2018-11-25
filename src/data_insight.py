@@ -1,22 +1,16 @@
-import pandas as pd
-from collections import Counter
 import numpy as np
 from random import shuffle
 import os
 
-
 from src import generate_data as gd
+
 
 class DataInsight:
 
     def __init__(self):
 
         self.gen_data = gd.DataGenerate()
-        # self.train_data = np.load(self.gen_data.training_data_file_path+"1.npy")
         self.modified_training_data_file_path = "data/training_data_v2.npy"
-        # df = pd.DataFrame(self.train_data)
-        # print(df.head())
-        # print(Counter(df[1].apply(str)))
 
     def individualChoices(self, training_data_file_path):
         train_data = np.load(training_data_file_path)
@@ -40,7 +34,8 @@ class DataInsight:
 
     def main(self):
         final_data = []
-        file_names = os.listdir("data/")  # dir is your directory path
+        # dir is your directory path
+        file_names = os.listdir("data/")
         number_files = len(file_names)
         file_names.sort()
         print(file_names)
@@ -64,5 +59,6 @@ class DataInsight:
 
         np.save(self.modified_training_data_file_path, final_data)
 
+# to run this file independently
 # z=DataInsight()
 # z.main()
