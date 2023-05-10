@@ -1,4 +1,5 @@
 import numpy as np
+import json
 import cv2
 import time
 import os
@@ -22,19 +23,21 @@ class DataGenerate:
         self.WIDTH = 224
         self.count = 0
         self.training_data_file_path = 'data/training_data'
+        with open("labels.json", "r+") as fp:
+            self.labels = json.load(fp)
 
     def key_to_one_hot(self, keys):
         """
         Convert keys to a integer value.
-        0x26 -> up(0)
-        0x28 -> down(1)
+        "Key.up" -> up(0)
+        "Key.down" -> down(1)
         else -> nothing(2)
         """
         output = self.key_to_int["nothing"]
 
-        if 0x26 in keys:
+        if "Key.up" == keys:
             output = self.key_to_int["up"]
-        elif 0x28 in keys:
+        elif "Key.down" == keys:
             output = self.key_to_int["down"]
         return output
 
@@ -44,38 +47,46 @@ class DataGenerate:
             print(i + 1)
             time.sleep(1)
 
+        if not os.path.exists(os.path.dirname(self.training_data_file_path)):
+            os.makedirs(os.path.dirname(self.training_data_file_path))
         file_names = os.listdir("data/")  # dir is your directory path
-        number_files = len(file_names)
-        self.count = number_files
+        file_no = len(file_names)
+        self.count = file_no
         while self.count < 50 and True:
+            img_filename = "img" + str(file_no)
+            file_no += 1
+            # original_screen = gb.mac_grab_screen(region=(0, 80, 675, 280))
+            original_screen = gb.mac_grab_screen(region=(0, 370, 765, 670))
 
-            # original_screen = gb.grab_screen(region=(0, 80, 675, 280))
-            original_screen = gb.grab_screen(region=(0, 100, 900, 340))
-
-            keys = gk.key_check()
+            keys = gk.get_key()
             output = self.key_to_one_hot(keys)
 
             original_screen = cv2.cvtColor(original_screen, cv2.COLOR_BGR2GRAY)
 
             original_screen = cv2.resize(original_screen, (self.HEIGHT, self.WIDTH))
-            cv2.imshow("window", original_screen)
 
-            training_data.append([original_screen, output])
+            # cv2.imshow("window", original_screen)
+            cv2.imwrite(img_filename, original_screen)
+            self.labels[img_filename] = output
+
+            # training_data.append([original_screen, output])
             print("Key pressed ", self.int_to_key[output])
 
-            if cv2.waitKey(25) & 0xFF == ord('q'):
+            if gk.get_key() == 'q' or self.count == 50:
+                with open("labels.json") as fp:
+                    json.dump(self.labels, fp)
                 cv2.destroyAllWindows()
-                break
-            if len(training_data) % 2500 == 0:
+                return True
+
+            if len(training_data) % 25 == 0:
                 self.count += 1
-                print("file name to be written -> ", self.training_data_file_path + str(self.count) + ".npy")
-                np.save(self.training_data_file_path + str(self.count) + ".npy", training_data)
-                training_data = []
-                if self.count == 50:
-                    cv2.destroyAllWindows()
-                    return True
+            #     print("file name to be written -> ", self.training_data_file_path + str(self.count) + ".npy")
+            #     np.save(self.training_data_file_path + str(self.count) + ".npy", training_data)
+            #     training_data = []
+            #     if
+            #         return True
         return False
 
-# to run this file indenpendently
+# to run this file independently
 # z=DataGenerate()
 # z.main()
