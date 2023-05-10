@@ -1,11 +1,9 @@
 import cv2
 import numpy as np
-import win32gui
-import win32ui
-import win32con
-import win32api
+import pyautogui
 
-def grab_screen(region=None):
+
+def win_grab_screen(region=None):
 
     hwin = win32gui.GetDesktopWindow()
 
@@ -38,3 +36,15 @@ def grab_screen(region=None):
     win32gui.DeleteObject(bmp.GetHandle())
 
     return cv2.cvtColor(img, cv2.COLOR_BGRA2RGB)
+
+
+def mac_grab_screen(region):
+    im = pyautogui.screenshot(region=region)
+    image = np.asarray(im)
+    return image
+
+
+# im = mac_grab_screen(region=(0, 100, 900, 340))
+# import matplotlib.pyplot as plt
+# plt.imshow(im)
+# plt.show()
