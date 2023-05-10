@@ -1,17 +1,6 @@
-import win32api as wapi
+from pynput import keyboard
 
-"""
-  0x26: "up Arrow",
-  0x28: "Down Arrow"}
-"""
-
-key_list = [0x26, 0x28]
-no_of_classes = len(key_list) + 1
-
-
-def key_check():
-    pressed = []
-    for key in key_list:
-        if wapi.GetAsyncKeyState(key):
-            pressed.append(key)
-    return pressed
+def get_key():
+    with keyboard.Events() as events:
+        for event in events:
+            return event.key
