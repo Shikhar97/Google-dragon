@@ -8,13 +8,12 @@ from selenium.common.exceptions import WebDriverException
 
 from src import data_insight, generate_data as gd
 
-files_created = 0
+files_created = False
 game_url = "chrome://dino/"
 
 options = webdriver.ChromeOptions()
 options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--no-sandbox")
-options.headless = False
 options.add_argument("--disable-infobars")
 options.page_load_strategy = "normal"
 options.add_experimental_option("detach", True)
@@ -39,15 +38,14 @@ except WebDriverException:
 wait.until(EC.visibility_of_element_located((By.ID, "t"))).send_keys(Keys.SPACE)
 
 # if game started generate the data
-# if element:
 gen_data = gd.DataGenerate()
 
 if gen_data:
     files_created = gen_data.main()
+    driver.close()
+    driver.quit()
 
 # if data generated clean and compress it
 if files_created:
-    driver.close()
-    driver.quit()
     obj = data_insight.DataInsight()
     obj.main()

@@ -45,16 +45,14 @@ class DataGenerate:
         return output
 
     def main(self):
-        training_data = []
         for i in list(range(4))[::-1]:
             print(i + 1)
             time.sleep(1)
 
-        if not os.path.exists(os.path.dirname(self.training_data_file_path)):
-            os.makedirs(os.path.dirname(self.training_data_file_path))
+        if not os.path.exists("data"):
+            os.makedirs("data")
         file_names = os.listdir("data/")  # dir is your directory path
         file_no = len(file_names)
-        self.count = file_no
         while True:
             img_filename = "img" + str(file_no) + ".jpg"
             file_no += 1
@@ -75,18 +73,13 @@ class DataGenerate:
             # training_data.append([original_screen, output])
             print("Key pressed ", self.int_to_key[output])
 
-            if gk.get_key() == 'q' or self.count == 50:
+            if gk.get_key() == 'q' or self.count == 10:
                 with open(self.training_data_file_path, "w+") as fp:
                     json.dump(self.labels, fp)
                 cv2.destroyAllWindows()
                 return True
 
-            if len(training_data) % 5 == 0:
+            if len(self.labels) % 250 == 0:
                 self.count += 1
-            #     print("file name to be written -> ", self.training_data_file_path + str(self.count) + ".npy")
-            #     np.save(self.training_data_file_path + str(self.count) + ".npy", training_data)
-            #     training_data = []
-
-# to run this file independently
-# z=DataGenerate()
-# z.main()
+                with open(self.training_data_file_path, "w+") as fp:
+                    json.dump(self.labels, fp)
