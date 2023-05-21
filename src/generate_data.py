@@ -1,10 +1,11 @@
-import numpy as np
-import json
+import os
 import cv2
 import time
-import os
+import json
+import pyautogui
+import numpy as np
 
-from src import grab_screen as gb, get_keys as gk
+from pynput import keyboard
 
 
 class DataGenerate:
@@ -28,6 +29,11 @@ class DataGenerate:
                 self.labels = json.load(fp)
         else:
             self.labels = {}
+
+    def grab_screen(self, region):
+        im = pyautogui.screenshot(region=region)
+        image = np.asarray(im)
+        return image
 
     def key_to_one_hot(self, keys):
         """
@@ -57,29 +63,36 @@ class DataGenerate:
             img_filename = "img" + str(file_no) + ".jpg"
             file_no += 1
             # original_screen = gb.mac_grab_screen(region=(0, 80, 675, 280))
-            original_screen = gb.grab_screen(region=(0, 370, 765, 670))
+            original_screen = self.grab_screen(region=(0, 400, 765, 700))
+            with keyboard.Events() as events:
+                event = events.get(0.5)
+                if event is None:
+                    output = self.key_to_one_hot(None)
+                elif event.key == keyboard.KeyCode.from_char('q'):
+                    with open(self.training_data_file_path, "w+") as fp:
+                        json.dump(self.labels, fp)
+                    cv2.destroyAllWindows()
+                    return True
+                else:
+                    output = self.key_to_one_hot(str(event.key))
+                print("Key pressed ", self.int_to_key[output])
 
-            keys = gk.get_key()
-            output = self.key_to_one_hot(keys)
-
+            self.labels[img_filename] = output
             original_screen = cv2.cvtColor(original_screen, cv2.COLOR_BGR2GRAY)
-
             original_screen = cv2.resize(original_screen, (self.HEIGHT, self.WIDTH))
 
             # cv2.imshow("window", original_screen)
             cv2.imwrite(os.path.join("data", img_filename), original_screen)
-            self.labels[img_filename] = output
 
             # training_data.append([original_screen, output])
-            print("Key pressed ", self.int_to_key[output])
 
-            if gk.get_key() == 'q' or self.count == 10:
+            if self.count == 1:
                 with open(self.training_data_file_path, "w+") as fp:
                     json.dump(self.labels, fp)
                 cv2.destroyAllWindows()
                 return True
 
-            if len(self.labels) % 250 == 0:
+            if len(self.labels) % 50 == 0:
                 self.count += 1
                 with open(self.training_data_file_path, "w+") as fp:
                     json.dump(self.labels, fp)
