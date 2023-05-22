@@ -65,7 +65,7 @@ class DataGenerate:
             # original_screen = gb.mac_grab_screen(region=(0, 80, 675, 280))
             original_screen = self.grab_screen(region=(0, 400, 765, 700))
             with keyboard.Events() as events:
-                event = events.get(0.5)
+                event = events.get(0.2)
                 if event is None:
                     output = self.key_to_one_hot(None)
                 elif event.key == keyboard.KeyCode.from_char('q'):
@@ -86,7 +86,7 @@ class DataGenerate:
 
             # training_data.append([original_screen, output])
 
-            if self.count == 1:
+            if self.count == 10:
                 with open(self.training_data_file_path, "w+") as fp:
                     json.dump(self.labels, fp)
                 cv2.destroyAllWindows()
